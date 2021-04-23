@@ -205,7 +205,7 @@
 
  #sec-page-aboutus{
 
-        width:60%;
+        width:56%;
         height: 60%;
         padding:40px;
         text-align:center;
@@ -223,11 +223,11 @@ margin-left: 10px;
 
 
         width:40%;
-        height: 50%;
+        height: 60%;
         margin-right: 10px;
         margin-left: -20px;
         float:right;
-        margin-top:70px;
+        margin-top:40px;
     }
 
 
@@ -323,22 +323,17 @@ img {vertical-align: middle;}
                     <div class="numbertext">1 / 3</div>
 
 
-                    <img src="public/static/ret1.jpg" style="width:100%" height="450px"/>
-
-                    <div class="text">Caption Text</div>
+                    <img src="public/static/restaurant1.jpg" style="width:100%" height="450px"/>
                 </div>
 
                 <div class="mySlides fade">
                     <div class="numbertext">2 / 3</div>
-                    <img src="public/static/ret2.jpg" style="width:100%" height="450px"/>
-
-                    <div class="text">Caption Two</div>
+                    <img src="public/static/restaurant2.jpg" style="width:100%" height="450px"/>
                 </div>
 
                 <div class="mySlides fade">
                     <div class="numbertext">3 / 3</div>
-                    <img src="public/static/ret3.jpg" style="width:100%" height="450px"/>
-                    <div class="text">Caption Three</div>
+                    <img src="public/static/restaurant3.jpg" style="width:100%" height="450px"/>
                 </div>
 
             </div>
@@ -363,7 +358,7 @@ img {vertical-align: middle;}
 
             </div>
             <div id="sec-page-pic">
-                <img src="public/static/d.jpg" style="width:100%" height="100%"/>
+                <img src="public/static/restaurant4.jpg" style="width:100%" height="100%"/>
             </div>
 
 
@@ -387,7 +382,7 @@ img {vertical-align: middle;}
 
     </div>
     <div id="chatbot-footer">
-        <img src="public/static/icon1.png" style="width:25px" height="25px"/>
+        <img src="public/static/smiley.png" style="width:25px" height="25px"/>
         <input id="nameInput" type="text" name="msg" placeholder="Ask me anything..."/>
     </div>
 
@@ -398,7 +393,7 @@ img {vertical-align: middle;}
         function getBotResponse() {
           var rawText = $("#nameInput").val();
 
-          var userHtml = '<p class="userText"><img src="public/static/lion.png" style="width:20px" height="20px"/> <span>' + rawText + "</span></p>";
+          var userHtml = '<p class="userText"> <span>' + rawText + "</span></p>";
 
           $("#nameInput").val("");
           $("#chatbot").append(userHtml);
@@ -409,7 +404,16 @@ img {vertical-align: middle;}
           var api_end_point = "http://0.0.0.0:8085/message";
 
           $.get(api_end_point, { message: rawText }).done(function(data) {
-            var botHtml = '<p class="botText"><span>' + data.response + '</span></p><p class="robotPic"><img src="public/static/icon1.png" style="width:20px" height="20px"/></p>';
+            console.log(data)
+            var botHtml = '<p class="botText"><span>' + data.response.result + '</span></p><p class="robotPic"><img src="public/static/chatbot.png" style="width:20px" height="20px"/></p>';
+            menu = ''
+            if (data.response.menu){
+                menu = '<div><table border="0", cellspacing="5" ><tr><th>Name</th><th> </th><th>Price</th><th> </th><th>Picture</th><th></th></tr>'
+                menu_rows =data.response.menu.map(create_menu_item)
+                menu = menu + menu_rows + '</table></div>'
+            }
+            botHtml = botHtml + menu
+
             $("#chatbot").append(botHtml);
             document
               .getElementById("nameInput")
@@ -418,6 +422,11 @@ img {vertical-align: middle;}
                 updateScroll();
           });
         }
+
+        function create_menu_item(menu_item) {
+            return '<tr><td colspan="2">' + menu_item.name + '</td><td colspan="2"> $'+ menu_item.price +'</td><td colspan="2">'+menu_item.picture+'</td></tr>'
+        }
+
         $("#nameInput").keypress(function(e) {
           if (e.which == 13) {
             getBotResponse();
